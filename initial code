@@ -1,0 +1,59 @@
+"""A program to read a CSV file of rainfalls and print the totals
+   for each month.
+"""
+
+from os.path import isfile as is_valid_file
+
+def main():
+    """Prompt the user to provide a csv file of rainfall data, process the 
+       given file's data, and print the monthly rainfall totals. 
+       The file is assumed to have the month number in column 1, the number 
+       of days in the month in column 2, and the floating point rainfalls 
+       (in mm) for that month in the remaining columns of the row.
+    """
+    file = get_file()
+    read_file= reader(file)
+    process= process_file(read_file)
+    print_rainfalls= print_results(process)
+
+def get_file():
+    """function that prompts the user for a valid file"""
+    filename = input('Input csv file name? ')
+    while not is_valid_file(filename):
+        print('File does not exist.')
+        filename = input('Input csv file name? ')   
+    return filename
+
+def reader(infile):
+    """Function that reads the file entered by the user"""
+    datafile = open(infile) 
+    data = datafile.read().splitlines()
+    datafile.close()
+    return data
+
+def process_file(data1):
+    """Function that manipulates the data extracted from the file"""
+    results = []  
+    for line in data1:
+        columns = line.split(',')
+        month = int(columns[0])
+        num_days = int(columns[1])
+        sum_rainfall= get_total_rainfall(columns,num_days)
+        results.append((month, sum_rainfall)) 
+    return results 
+
+def get_total_rainfall(columns,num_days):
+    """funtion that gets the monthly sum"""
+    total_rainfall = 0
+    for col in columns[2:2 + num_days]:
+        total_rainfall += float(col)
+    return total_rainfall
+        
+def print_results(final_result):
+    """function that print the results found by the other functions"""
+    
+    print('Total rainfalls for each month')
+    for (month, total_rainfall) in final_result:
+        print('Month {:2}: {:.1f}'.format(month, total_rainfall))    
+
+main()
